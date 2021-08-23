@@ -5,7 +5,7 @@ var socket = io('', {
     'reconnectionAttempts': 5
 });
 
-const version = "JBot v0.6";
+const version = "JBot v0.61";
 
 function checksignedin() {
 	JB = JSON.parse(sessionStorage.getItem("JB"));
