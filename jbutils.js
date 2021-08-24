@@ -5,12 +5,15 @@ var socket = io('', {
     'reconnectionAttempts': 5
 });
 
+var JB = new Object();
 const version = "JBot v0.61";
 
 function checksignedin() {
 	JB = JSON.parse(sessionStorage.getItem("JB"));
-	if(JB.jbpass)
-		socket.emit('SignInSuperRequest',JB.jbpass);
+	if(JB != null) {
+		if(JB.hasOwnProperty('jbpass'))
+			socket.emit('SignInSuperRequest',JB.jbpass);
+	}
 	clearMessages();
 }
 
@@ -66,6 +69,11 @@ socket.on('infoResponse', function(data) {
 
 socket.on('errorResponse',function(data) {
 	$('#error').text(data);
+});
+
+// same as above except assume data is JSON format and pretty-prints the message
+socket.on('infoJSONResponse', function(data) {
+	$("#message1").html("<pre>"+JSON.stringify(JSON.parse(data),null,2)+"</pre>");
 });
 
 function readCookie(name)

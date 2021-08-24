@@ -6,12 +6,21 @@ var http = require('http');
 var bodyParser = require('body-parser');
 var app = require('express')();
 var	server = http.createServer(app);
-var	io = require('socket.io')(server);
 var crypto = require('crypto');
+
+//var	io = require('socket.io')(server);
+const io = require("socket.io")(server, {
+  allowRequest: (req, callback) => {
+    callback(null, req.headers.origin === undefined); // cross-origin requests will not be allowed
+  }
+});
+
 const dbf = require('./JSDBfunctions.js');
 const jbf = require('./JBfunctions.js');
+const tw = require('./twitterapi.js');
 var dbt = new dbf();
 var jbt = new jbf();
+var twt = new tw();
 var JB = new Object();
 
 app.use(bodyParser.json());       // to support JSON-encoded bodies
@@ -19,6 +28,11 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
 }));
 
+
+/* This does not work
+io.origins(["http://localhost:3000"]); // for local development
+io.origins(["https://jokebot3.appspot.com"]);
+*/
 //********** set the port to use
 const PORT = process.env.PORT || 3000;
 server.listen(PORT);
@@ -264,6 +278,18 @@ io.on('connection',function(socket) {
         socket.emit("errorResponse","APP credentials invalid");
     });
   });
+
+  socket.on('getTwitterFeedRequest',function(twname) {
+    if(AUTHUSERS[socket.id] != JB.jbid) return(autherror(socket));
+    twt.getTwitterIdFromName(twname, function(twid) {
+      if(twid == null || twid == "")
+        return(socket.emit("errorResponse","Name not found"));
+      twt.getTweetsFromId(twid, function(response) {
+         socket.emit("infoJSONResponse",response);
+      });
+    });
+  });
+
 }); //end of io.on
 
 /*******************************************

@@ -1,4 +1,3 @@
-var JB = new Object();
 var $jtable,$atable,$select;
 
 $(document).ready(function() {
@@ -11,7 +10,7 @@ $(document).ready(function() {
 		event.preventDefault();
 	});
 });
-
+ 
 function signInSuper() {
 	var pass = prompt("Please enter the password", "");
 	if(pass == null || pass == "") {
@@ -60,6 +59,17 @@ function reviewjokes() {
 	clearMessages();
 	socket.emit('getCatsRequest','');
 //	socket.emit('getAllJokesRequest','');
+}
+
+function gettwitterfeed() {
+	clearMessages();
+	var twname = prompt("Please enter twitter name", "");
+	if(twname == null || twname == "") {
+		return;
+	}
+	else {
+		socket.emit('getTwitterFeedRequest',twname);
+	}
 }
 
 function getjokes() {

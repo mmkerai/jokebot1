@@ -4,6 +4,7 @@ const Appfile = "appcredentials.json";
 const Jfile = "alljokes.json";
 var AppCreds;
 var AllJokes;
+var TwitJokes;
 
 // Load app credentials and jokes from JSON files
 // Use the memory as DB
@@ -155,5 +156,12 @@ JSDB.prototype.addAppCredentials = function(creds) {
   AppCreds.push(creds);
 }
 
+// Get jokes from Twitter
+JSDB.prototype.getTwitterJokes = function() {
+  //  console.log("Added new API credentials");
+  
+    AppCreds.push(creds);
+  }
+  
   
 module.exports = JSDB;
