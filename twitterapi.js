@@ -70,4 +70,38 @@ TwAPI.prototype.getTweetsFromUser = function(twuser, callback) {
     twitter_API_Request(path, callback);
 }
 
+// tidys up the joke text by removing hashs, @mentions and links
+TwAPI.prototype.beautifyJoke = function(text) {
+    var t1, match, regexp;
+//    console.log("t: "+text);
+    regexp = new RegExp('@([^\\s]*)','g');          // match @names
+    match = text.match(regexp);
+    if(match) {
+        // console.log("@ matched, ignored");      // contains a reply or re-tweet so ignore
+        return("ignore");                   // ignore this text, it is not a proper joke
+    }
+        // console.log("no match");                // ok to proceed
+    regexp = new RegExp('#([^\\s]*)','g');      // match hashtags
+    t1 = text.replace(regexp, '');
+//    console.log("t1: "+t1);
+    regexp = new RegExp('http([^\\s]*)','g');          // match http links
+    t1 = t1.replace(regexp, '');
+//    console.log("t2: "+t1);
+
+    return(t1);
+}
+
+// Check if this a question and answer type of joke or not
+TwAPI.prototype.getJokeType = function(text) {
+    var mt, regexp;
+	regexp = new RegExp('\\?([^\\s]*)','g');
+	mt = text.match(regexp, '');
+//	console.log("t4: "+mt);
+	if(mt)
+		return("Q&A")
+	else
+		return("Text")
+}
+
+
 module.exports = TwAPI;

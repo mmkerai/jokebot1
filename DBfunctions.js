@@ -63,7 +63,7 @@ DB.prototype.viewApps = function(callback) {
 DB.prototype.insertJoke = function(jobj) {
   CollJokes.insertOne(jobj, function(err, res) {
     if (err) throw err;
-    // console.log("1 joke inserted:" +res.insertedId);
+    console.log("1 joke inserted, JID:" +jobj.jid);
   });
 }
 
@@ -196,6 +196,17 @@ DB.prototype.getAllTwitterUsers = function(callback) {
   CollTwUsers.find({ }).toArray(function(err,result) {
     if (err) throw err;
     callback(result);
+  });
+}
+
+
+// get a list of all twitter user in collection
+DB.prototype.updateUserLastTweet = function(twuser,twid) {
+  CollTwUsers.updateOne(
+    {tw_id:twuser.tw_id},{$set: {last_tweet_id : twid}},function(err, res) {
+      if (err) throw err;
+      if (res.result)
+        console.log("User updated:" +res.result.nModified);
   });
 }
 

@@ -115,9 +115,8 @@ socket.on('getCatsResponse',function(cats) {
 	
 // Bootstrap table
 socket.on('getJokesResponse',function(jlist) {
-	$('#jtable').show();
-	$jtable.bootstrapTable({data: jlist});
-//	$jtable.bootstrapTable('load',{data: jlist});
+		$('#jtable').show();
+		$jtable.bootstrapTable({data: jlist});
 });
 
 // Bootstrap table
@@ -134,8 +133,10 @@ socket.on('getTwitterUsersResponse',function(tlist) {
 	$ttable.bootstrapTable({data: tlist});
 });
 
+// This saves the selected jokes to database
 $(function() {
     $select.click(function () {
-      alert('getSelections: ' + JSON.stringify($jtable.bootstrapTable('getSelections')))
+	  if(confirm("Are you sure you want to save to database?"))
+	  	socket.emit('saveJokesInDB',$jtable.bootstrapTable('getSelections'));
 	});
 });
