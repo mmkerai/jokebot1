@@ -35,7 +35,7 @@
 				<button class="btn btn-primary" onclick="createapp()">Create new app id</button>
 			</div>
 			<div class="col-xs-2">
-				<button class="btn btn-primary" onclick="viewapps()">View app ids</button>
+				<button class="btn btn-primary" onclick="viewapps()">Show app ids</button>
 			</div>
 			<div class="col-xs-2">
 				<button class="btn btn-primary" onclick="showapiform()">Get Access Token</button>
@@ -44,7 +44,13 @@
 				<button class="btn btn-primary" onclick="reviewjokes()">Review Jokes</button>
 			</div>
 			<div class="col-xs-2">
-				<button class="btn btn-primary" onclick="gettwitterfeed()">Get Twitter Feed</button>
+				<button class="btn btn-primary" onclick="addtwitteruser()">Add Twitter User</button>
+			</div>		
+			<div class="col-xs-2">
+				<button class="btn btn-primary" onclick="showtwitterusers()">Show Twitter Users</button>
+			</div>		
+			<div class="col-xs-2">
+				<button class="btn btn-primary" onclick="getnewjokes()">Get New Jokes</button>
 			</div>			
 		</div>
 		<p>&nbsp;</p>
@@ -93,10 +99,12 @@
 				<thead class="thead-light">
 				<tr>
 					<th data-field="state" data-checkbox="true"></th>
-					<th data-field="Jid">ID</th>
-					<th data-field="Category" data-sortable="true" data-filter-control="select" data-filter-data="var:filterCategory">Category</th>
-					<th data-field="Joke">Joke</th>
-					<th data-field="Used">Used</th>
+					<th data-field="jid">ID</th>
+					<th data-field="category" data-sortable="true" data-filter-control="select" data-filter-data="var:filterCategory">Category</th>
+					<th data-field="type">Type</th>
+					<th data-field="source">Source</th>
+					<th data-field="joke">Joke</th>
+					<th data-field="used">Used</th>
 				</tr>
 				</thead>
 			</table>
@@ -123,6 +131,34 @@
 					<th data-field="app_id">APP Id</th>
 					<th data-field="api_key">API Key</th>
 					<th data-field="api_requests">Requested</th>
+				</tr>
+				</thead>
+			</table>
+		</div>
+		<div id="ttable">
+			<table
+				id="attable"
+				class="table table-striped"
+				data-toggle="abtable"
+				data-height="360"
+				data-search="false"
+				data-show-refresh="true"
+				data-filter-control="true"
+				data-method="get"
+				data-pagination="true"
+				data-detail-view="true"
+				data-detail-view-by-click="true"
+				data-detail-view-icon="false"
+				data-click-to-select="true"
+				data-side-pagination="server">
+				<thead class="thead-light">
+				<tr>
+					<th data-field="state" data-checkbox="true"></th>
+					<th data-field="tw_id">Twitter Id</th>
+					<th data-field="tw_name">Name</th>
+					<th data-field="tw_username">Username</th>
+					<th data-field="added">Added</th>
+					<th data-field="last_tweet_id">Last Tweet ID</th>
 				</tr>
 				</thead>
 			</table>

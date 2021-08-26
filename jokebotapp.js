@@ -8,6 +8,10 @@ var app = require('express')();
 var	server = http.createServer(app);
 var crypto = require('crypto');
 
+// delete these line afterwords
+const fs = require('fs');
+const Jfile = "alljokes.json";
+
 //var	io = require('socket.io')(server);
 const io = require("socket.io")(server, {
   allowRequest: (req, callback) => {
@@ -15,19 +19,20 @@ const io = require("socket.io")(server, {
   }
 });
 
-const dbf = require('./JSDBfunctions.js');
+//const dbf = require('./JSDBfunctions.js');
+const dbf = require('./DBfunctions.js');
 const jbf = require('./JBfunctions.js');
 const tw = require('./twitterapi.js');
 var dbt = new dbf();
 var jbt = new jbf();
 var twt = new tw();
 var JB = new Object();
+var HIGHESTJOKEID = 1234;
 
 app.use(bodyParser.json());       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
 }));
-
 
 /* This does not work
 io.origins(["http://localhost:3000"]); // for local development
@@ -47,13 +52,30 @@ var ActiveTokens = new Object(); // keep list of active tokens by expiry time
 // Run process every 13 seconds to clear old tokens
 setInterval(function() {
   const currenttime = new Date().getTime();
-//  console.log("timenow: "+currenttime);
   Object.keys(ActiveTokens).forEach(function (token) {
 //    console.log("Token: "+token+" expiry: "+ActiveTokens[token].expires);
     if(Number(currenttime) > Number(ActiveTokens[token].expires))
       delete ActiveTokens[token]; // token expired so remove from list
   });
 },13000); // every 13 seconds
+
+// Get highest joke ID. This is needed to guarantee all new jokes will
+// have a unique joke ID
+setTimeout(function () {
+  dbt.getHighestJokeId(function(jid) {
+    HIGHESTJOKEID = jid;
+    console.log("Highest jid: "+HIGHESTJOKEID);
+  });
+},5000);
+
+// used for initial setting up and testing
+// setTimeout(function () {
+//   const newapp = jbt.newAppObject();
+//   dbt.saveApp(newapp, function(appid) {
+//     console.log("New app created: "+newapp);
+//   });
+
+// },5000);
 
 // URL endpoint for authentication
 app.post('/apiv1/authenticate', function(req, res) {
@@ -176,31 +198,17 @@ io.on('connection',function(socket) {
     autherror(socket,"Logged out");
   });
 
-	socket.on('loadJokesRequest',function() {
-    if(AUTHUSERS[socket.id] != JB.jbid) return(autherror(socket));
-    const str = "Loading Jokes to DB from file "+QFile;
-		console.log(str);
-    loadjokes(QFile,socket);
-		socket.emit('infoResponse',str);
-  });
-
-  socket.on('loadAppRequest',function() {
-    if(AUTHUSERS[socket.id] != JB.jbid) return(autherror(socket));
-    dbt.loadAppCredentials();
-    socket.emit('infoResponse',"App credentials loaded");
-  });
-
   // request can be done by someone on landing page
   // TODO update to ask for name and email in future
   socket.on('getApiCredentialsRequest',function() {
     var api_creds = jbt.newAppObject();
-    dbt.addAppCredentials(api_creds);
+    dbt.saveAppCredentials(api_creds);
     socket.emit('infoResponse',JSON.stringify(api_creds));
   });
 
   socket.on('viewAppRequest',function() {
     if(AUTHUSERS[socket.id] != JB.jbid) return(autherror(socket));
-    console.log("Viewing all apps");
+//    console.log("Viewing all apps");
     dbt.viewApps(function(obj) {
       socket.emit('viewAppResponse',obj);
     });
@@ -279,14 +287,41 @@ io.on('connection',function(socket) {
     });
   });
 
-  socket.on('getTwitterFeedRequest',function(twname) {
+  socket.on('getTwitterUsersRequest',function() {
     if(AUTHUSERS[socket.id] != JB.jbid) return(autherror(socket));
-    twt.getTwitterIdFromName(twname, function(twid) {
-      if(twid == null || twid == "")
-        return(socket.emit("errorResponse","Name not found"));
-      twt.getTweetsFromId(twid, function(response) {
-         socket.emit("infoJSONResponse",response);
+    dbt.getAllTwitterUsers(function(users) {
+      socket.emit('getTwitterUsersResponse',users);
+    });
+  });
+
+  socket.on('getNewJokesRequest',function(twname) {
+    if(AUTHUSERS[socket.id] != JB.jbid) return(autherror(socket));
+    dbt.getAllTwitterUsers(function(users) {
+      if(users == null || users == "")
+        return(socket.emit("errorResponse","No twitter users"));
+
+      var newjoke = [];
+      var tweets;
+      users.forEach((user,index,array) => {
+        twt.getTweetsFromUser(user, function(response) {  // response contains array of tweets
+          tweets = JSON.parse(response);
+          tweets.data.forEach(tweet => {
+            newjoke.push(tweet.text);
+          });
+        });
+        if(index == array.length - 1)    // last one in list
+          socket.emit("infoResponse",newjoke);
       });
+    });
+  });
+  
+  socket.on('addTwitterUserRequest',function(twname) {
+    if(AUTHUSERS[socket.id] != JB.jbid) return(autherror(socket));
+    twt.getTwitterUserFromName(twname, function(twuser) {
+      if(twuser == null || twuser == "")
+        return(socket.emit("errorResponse","Name not found"));
+      dbt.saveNewTwUser(twuser);
+      socket.emit("infoResponse",twname +" user added");
     });
   });
 
@@ -318,4 +353,19 @@ function autherror(socket,msg) {
   if(!msg)
     msg = "Please login as admin";
   socket.emit("errorResponse",msg);
+}
+
+// load all jokes. Used once, do not use again
+loadAllJokesFromFile = function() {
+  var joke, content, jsoncontent,count=0;
+ 
+  content = fs.readFileSync(Jfile);
+  jsoncontent = JSON.parse(content);
+  jsoncontent.forEach(obj => {
+    joke = jbt.newJoke(HIGHESTJOKEID++,obj.Category,"Q&A","File",obj.Joke);
+    dbt.insertJoke(joke);
+    count++;
+    });
+  
+  console.log(count+" Jokes Loaded");
 }

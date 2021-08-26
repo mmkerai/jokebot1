@@ -5,6 +5,7 @@ $(document).ready(function() {
 	checksignedin();
 	$jtable = $('#btable');
 	$atable = $('#abtable');
+	$ttable = $('#attable');
 	$select = $('#select');
 	$('#reviewj').submit(function(event) {
 		event.preventDefault();
@@ -22,16 +23,10 @@ function signInSuper() {
 	}
 }
  
-function loadjokes() {
-	console.log("Loading Jokes");
-	clearMessages();
-	socket.emit('loadJokesRequest','');
-}
-
 function createapp() {
 	console.log("Creating app credentials");
 	clearMessages();
-	socket.emit('loadAppRequest','');
+	socket.emit('getApiCredentialsRequest','');
 }
 
 function viewapps() {
@@ -55,35 +50,41 @@ function getaccesstoken() {
 }
 
 function reviewjokes() {
-	console.log("Reviewing Jokes");
+//	console.log("Reviewing Jokes");
 	clearMessages();
 	socket.emit('getCatsRequest','');
 //	socket.emit('getAllJokesRequest','');
 }
 
-function gettwitterfeed() {
+function addtwitteruser() {
 	clearMessages();
-	var twname = prompt("Please enter twitter name", "");
-	if(twname == null || twname == "") {
+	var tw = prompt("Please enter twitter username", "");
+	if(tw == null || tw == "") {
 		return;
 	}
 	else {
-		socket.emit('getTwitterFeedRequest',twname);
+		socket.emit('addTwitterUserRequest',tw);
 	}
 }
 
-function getjokes() {
-	if(!JB)
-		return($('#error').text("You need to login first"));
+function showtwitterusers() {
+	clearMessages();
+	socket.emit('getTwitterUsersRequest','');
+}
 
-		console.log("Getting Jokes by Category:"+$('#jcat').val());
-		$("#error").text("");
-		$('#qtable').show();
-		socket.emit('getJokesByCatRequest',$('#jcat').val());	
+function getnewjokes() {
+	clearMessages();
+	socket.emit('getNewJokesRequest','');
+
+}
+
+function getjokes() {
+	clearMessages();
+	console.log("Getting Jokes by Category:"+$('#jcat').val());
+	socket.emit('getJokesByCatRequest',$('#jcat').val());	
 }
 
 socket.on('createAppResponse',function(obj) {
-	$("#error").text("");
 	$("#message1").text("App Created");
 	$("#message2").text("App ID: "+obj.app_id+" API Key: "+obj.api_key);
 });
@@ -94,8 +95,7 @@ socket.on('SignInSuperResponse',function(jobj) {
 });
 
 socket.on('getCatsResponse',function(cats) {
-	let items = Object.getOwnPropertyNames(cats);
-//		let items = cats;
+	let items = cats;
 	console.log("Cats are: "+items);
 	$('#jcat').empty();
 	//First entry in dropdown
@@ -116,16 +116,22 @@ socket.on('getCatsResponse',function(cats) {
 // Bootstrap table
 socket.on('getJokesResponse',function(jlist) {
 	$('#jtable').show();
-	$('#atable').hide();
 	$jtable.bootstrapTable({data: jlist});
 //	$jtable.bootstrapTable('load',{data: jlist});
 });
 
 // Bootstrap table
 socket.on('viewAppResponse',function(alist) {
-	$('#jtable').hide();
 	$('#atable').show();
+//	console.log(alist);
 	$atable.bootstrapTable({data: alist});
+});
+
+// Bootstrap table
+socket.on('getTwitterUsersResponse',function(tlist) {
+	$('#ttable').show();
+//	console.log(tlist);
+	$ttable.bootstrapTable({data: tlist});
 });
 
 $(function() {

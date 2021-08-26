@@ -5,6 +5,16 @@ var https = require('https');
 const TwID = "3429950987";
 const access_token = "AAAAAAAAAAAAAAAAAAAAAJGESwEAAAAAZtwbJwPFrf7M6pcP4Gq%2FpFVpyHA%3DJcK950uPhluGnbpjdSYxH7ylULxne0nW9JigIeUIrgFYeBK9tY";
 
+class TwUser {
+    constructor(id,name,uname) {
+      this.tw_id = id;
+      this.tw_name = name;
+      this.tw_username = uname;
+      this.last_tweet_id = 0;
+      this.added = new Date().toISOString();
+    }
+};
+  
 function TwAPI() {
 
   }
@@ -41,22 +51,22 @@ function TwAPI() {
 	getReq.end();
 }
 
-TwAPI.prototype.getTwitterIdFromName = function(twname, callback) {
+TwAPI.prototype.getTwitterUserFromName = function(twname, callback) {
     var retval = null;
     var path = '/2/users/by/username/' + twname;
     twitter_API_Request(path,function(response) {
         var jstr = JSON.parse(response);
         if(jstr.hasOwnProperty('data')) {
             console.log("ID is "+jstr.data.id);
-            retval = jstr.data.id;
+            retval = new TwUser(jstr.data.id,jstr.data.name,jstr.data.username);
         }
 
         callback(retval);
     });
 }
 
-TwAPI.prototype.getTweetsFromId = function(twid, callback) {
-    var path = '/2/users/' + twid + '/tweets?tweet.fields=created_at,author_id';
+TwAPI.prototype.getTweetsFromUser = function(twuser, callback) {
+    var path = '/2/users/' + twuser.tw_id + '/tweets?since_id='+twuser.last_tweet_id+'&tweet.fields=created_at,author_id';
     twitter_API_Request(path, callback);
 }
 

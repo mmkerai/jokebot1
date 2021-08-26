@@ -11,11 +11,13 @@ class JBApp {
 };
 
 class JBJoke {
-  constructor(id,cat,joke) {
-      this.Jid = id;
-      this.Category = cat;
-      this.Joke = joke;
-      this.Used = 0;
+  constructor(id,cat,type,source,joke) {
+      this.jid = id;
+      this.category = cat;    //subject e.g. science
+      this.type = type;       // not used yet
+      this.source = source;   // where obtained e.g. twitter account
+      this.joke = joke;
+      this.used = 0;
   }
 };
 
@@ -37,10 +39,9 @@ JB.prototype.newAppObject = function() {
   return(myobj);
 }
 
-
 // check all values are valid and sanitise before inserting into database
-JB.prototype.validateJoke = function(jobj) {
-  return new JBJoke(jobj.Jid,jobj.Category,jobj.Joke);
+JB.prototype.newJoke = function(jid,category,type,source,joke) {
+  return new JBJoke(jid,category,type,source,joke);
 }
 
 // check all values are valid before updating existing joke
@@ -66,8 +67,9 @@ function generateAPIKey() {
   var time = new Date().getTime();
   var random = value.toString() + time.toString();
 //  console.log("Value: "+value+" Random: "+random);
-  let buf = Buffer.from(random);
-	return(buf.toString('base64'));
+  var buf = Buffer.from(random).toString('base64');
+  var key = buf.substring(0,32);
+	return(key);
 }
 
 function generateToken() {
@@ -81,5 +83,6 @@ function generateToken() {
 
   return token;
 }
+
 
 module.exports = JB;

@@ -6,7 +6,7 @@ var socket = io('', {
 });
 
 var JB = new Object();
-const version = "JBot v0.61";
+const version = "JBot v0.7";
 
 function checksignedin() {
 	JB = JSON.parse(sessionStorage.getItem("JB"));
@@ -33,6 +33,7 @@ function setDefaultValues() {
 	$('#jbadmin').hide();
 	$('#jtable').hide();
 	$('#atable').hide();
+	$('#ttable').hide();
 	$('#apiform').hide();
 	clearMessages();
 	console.log("Doc ready");
@@ -53,6 +54,9 @@ function clearMessages() {
 	$("#error").text("");
 	$("#message1").text("");
 	$("#message2").text("");
+	$('#jtable').hide();
+	$('#atable').hide();
+	$('#ttable').hide();
 }
 
 function getURLParameter(name) {
