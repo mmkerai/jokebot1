@@ -17,3 +17,8 @@ function getjoke() {
 	clearMessages();
 	socket.emit('getJokeRequest','');
 }
+
+socket.on('getJokeResponse',function(ajoke) {
+	console.log(JSON.stringify(ajoke));
+	$('#message1').text(ajoke.joke);
+});

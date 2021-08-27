@@ -234,7 +234,7 @@ io.on('connection',function(socket) {
   socket.on('getJokeRequest',function() {
     dbt.getRandomJoke(function(thejoke) {
       if(thejoke) {
-        socket.emit('infoResponse',JSON.stringify(thejoke));
+        socket.emit('getJokeResponse',thejoke);
         dbt.updateJokeUsage(thejoke);   // update usage stats for this joke
       }
       else

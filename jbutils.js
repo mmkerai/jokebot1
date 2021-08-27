@@ -6,7 +6,7 @@ var socket = io('', {
 });
 
 var JB = new Object();
-const version = "JBot v0.7";
+const version = "JBot v0.71";
 
 function checksignedin() {
 	JB = JSON.parse(sessionStorage.getItem("JB"));
