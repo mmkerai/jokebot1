@@ -20,7 +20,7 @@
 		</div>
 		<p>&nbsp;</p>
 		<div class="col-xs-12">
-			<p>There are approxiately 1000 jokes. You can request a random joke or by joke id or by category.
+			<p>There are approxiately 1000 jokes. New jokes are added regularly via Twitter. You can request a random joke or by joke id or by category.
 				Full details are in the API documentation.</p>
 			<div class="col-xs-2">
 				<a class="btn btn-primary" href="JokesAPI.pdf">View the API documentation (PDF)</a>
@@ -28,17 +28,17 @@
 		</div>
 		<p>&nbsp;</p>
 		<div class="col-xs-12">
-			<div class="col-xs-2">
-				<button class="btn btn-warning" onclick="getAPIcreds()">Get API credentials</button>
+			<div class="col-xs-3">
+				<button class="btn btn-warning" onclick="regAPIcreds()">Register for API credentials</button>
 			</div>
 			<div class="col-xs-2">
-				<button class="btn btn-success" onclick="getjoke()">Get random joke</button>
+				<button class="btn btn-success" onclick="getjoke()">Get a random joke</button>
 			</div>
 		</div>	
 	</div> <!-- container main -->
 <p>&nbsp;</p>
-	<p class="text-center" id="error"></p>
-	<p class="text-center" id="message1"></p>
-	<p class="text-center" id="message2"></p>
+	<p class="text-center"><span class="text-danger" id="error"></span></p>
+	<p class="text-center"><span class="text-dark" id="message1"></span></p>
+	<p class="text-center"><span class="text-danger" id="message2"></span></p>
 </body>
 </html>

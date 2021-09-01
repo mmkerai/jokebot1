@@ -23,9 +23,11 @@ const io = require("socket.io")(server, {
 const dbf = require('./DBfunctions.js');
 const jbf = require('./JBfunctions.js');
 const tw = require('./twitterapi.js');
+const em = require('./Emailfunctions.js');
 var dbt = new dbf();
 var jbt = new jbf();
 var twt = new tw();
+var emt = new em();
 var JB = new Object();
 var HIGHESTJOKEID = 1234;
 
@@ -199,11 +201,11 @@ io.on('connection',function(socket) {
   });
 
   // request can be done by someone on landing page
-  // TODO update to ask for name and email in future
-  socket.on('getApiCredentialsRequest',function() {
-    var api_creds = jbt.newAppObject();
+  socket.on('getApiCredentialsRequest',function(appname,email) {
+    var api_creds = jbt.newAppObject(appname,email);
     dbt.saveAppCredentials(api_creds);
-    socket.emit('infoResponse',JSON.stringify(api_creds));
+    emt.sendRegEmail(api_creds);
+    socket.emit('getApiCredentialsResponse',api_creds);
   });
 
   socket.on('viewAppRequest',function() {

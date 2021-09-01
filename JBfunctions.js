@@ -3,7 +3,9 @@ require('dotenv').config();
 const crypto = require('crypto');
 
 class JBApp {
-  constructor(id,key) {
+  constructor(name,email,id,key) {
+    this.app_name = name;
+    this.app_email = email;
     this.app_id = id;
     this.api_key = key;
     this.api_requests = 0;
@@ -34,8 +36,8 @@ function JB() {
   console.log("JB Class initialised");
 }
 
-JB.prototype.newAppObject = function() {
-  const myobj = new JBApp(generateAppId(),generateAPIKey());
+JB.prototype.newAppObject = function(appname,email) {
+  const myobj = new JBApp(appname,email,generateAppId(),generateAPIKey());
   return(myobj);
 }
 

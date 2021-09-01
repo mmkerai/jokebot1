@@ -6,7 +6,7 @@ var socket = io('', {
 });
 
 var JB = new Object();
-const version = "JBot v0.71";
+const version = "JBot v1.0";
 
 function checksignedin() {
 	JB = JSON.parse(sessionStorage.getItem("JB"));
@@ -125,3 +125,12 @@ function delCookie(name)
 {
 	document.cookie = name + "=; expires=Thu, 01-Jan-70 00:00:01 GMT; path=/";
 }
+
+// checks email is valid format
+function validateEmail(email) {
+
+    var re = /\S+@\S+\.\S+/;
+//	const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+	return re.test(email);
+}
+  
