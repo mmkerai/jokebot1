@@ -2,11 +2,11 @@
 var socket = io('', {
 	'reconnection': true,
     'reconnectionDelay': 5000,
-    'reconnectionAttempts': 5
+    'reconnectionAttempts': 10
 });
 
 var JB = new Object();
-const version = "JBot v1.0";
+const version = "JBot v1.1";
 
 function checksignedin() {
 	JB = JSON.parse(sessionStorage.getItem("JB"));
@@ -57,6 +57,8 @@ function clearMessages() {
 	$('#jtable').hide();
 	$('#atable').hide();
 	$('#ttable').hide();
+	$('#apiform').hide();
+	$('#select').hide();
 }
 
 function getURLParameter(name) {
@@ -64,7 +66,8 @@ function getURLParameter(name) {
 }
 
 socket.on('disconnect', function () {
-	socket.emit('logoutRequest',"");
+	console.log("Socket disconnected");
+//	socket.emit('logoutRequest',"");
 });
 
 socket.on('infoResponse', function(data) {

@@ -27,7 +27,6 @@ function regAPIcreds() {
 function getjoke() {
 	clearMessages();
 	socket.emit('getJokeRequest','');
-	$('#message1').html(apistr);
 }
 
 socket.on('getJokeResponse',function(ajoke) {

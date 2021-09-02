@@ -75,7 +75,7 @@ function showtwitterusers() {
 function getnewjokes() {
 	clearMessages();
 	socket.emit('getNewJokesRequest','');
-
+	$('#select').show();
 }
 
 function getjokes() {
@@ -115,14 +115,16 @@ socket.on('getCatsResponse',function(cats) {
 	
 // Bootstrap table
 socket.on('getJokesResponse',function(jlist) {
-		$('#jtable').show();
-		$jtable.bootstrapTable({data: jlist});
+	$('#jtable').show();
+	$jtable.bootstrapTable('destroy');
+	$jtable.bootstrapTable({data: jlist});
 });
 
 // Bootstrap table
 socket.on('viewAppResponse',function(alist) {
 	$('#atable').show();
 //	console.log(alist);
+	$atable.bootstrapTable('destroy');
 	$atable.bootstrapTable({data: alist});
 });
 
@@ -130,6 +132,7 @@ socket.on('viewAppResponse',function(alist) {
 socket.on('getTwitterUsersResponse',function(tlist) {
 	$('#ttable').show();
 //	console.log(tlist);
+	$ttable.bootstrapTable('destroy');
 	$ttable.bootstrapTable({data: tlist});
 });
 

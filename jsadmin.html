@@ -41,9 +41,6 @@
 				<button class="btn btn-primary" onclick="showapiform()">Get Access Token</button>
 			</div>
 			<div class="col-xs-2">
-				<button class="btn btn-primary" onclick="reviewjokes()">Review Jokes</button>
-			</div>
-			<div class="col-xs-2">
 				<button class="btn btn-primary" onclick="addtwitteruser()">Add Twitter User</button>
 			</div>		
 			<div class="col-xs-2">
@@ -55,12 +52,14 @@
 		</div>
 		<p>&nbsp;</p>
 		<form id="reviewj" class="inputform" method="POST">
+		<div class="col-xs-2">
+			<button class="btn btn-success" onclick="reviewjokes()">Review Jokes</button>
+		</div>
 		Category<select id="jcat"></select>
 		<button class="btn btn-warning" onClick='getjokes()'>Get Jokes</button>
+		</form>
 		<p>&nbsp;</p>
 		<button class="btn btn-warning" id='select'>Save selection to DB</button>
-		</table>
-		</form>
 		<div id="apiform" class="form-horizontal col-xs-12 col-xs-offset-2">
 			<form>
 				<div class="form-group">
@@ -87,15 +86,11 @@
 				data-toggle="btable"
 				data-height="360"
 				data-search="false"
-				data-show-refresh="true"
 				data-filter-control="true"
 				data-method="get"
 				data-pagination="true"
-				data-detail-view="true"
-				data-detail-view-by-click="true"
-				data-detail-view-icon="false"
 				data-click-to-select="true"
-				data-side-pagination="server">
+				data-side-pagination="client">
 				<thead class="thead-light">
 				<tr>
 					<th data-field="state" data-checkbox="true"></th>
@@ -116,15 +111,11 @@
 				data-toggle="abtable"
 				data-height="360"
 				data-search="false"
-				data-show-refresh="true"
 				data-filter-control="true"
 				data-method="get"
 				data-pagination="true"
-				data-detail-view="true"
-				data-detail-view-by-click="true"
-				data-detail-view-icon="false"
 				data-click-to-select="true"
-				data-side-pagination="server">
+				data-side-pagination="client">
 				<thead class="thead-light">
 				<tr>
 					<th data-field="state" data-checkbox="true"></th>
@@ -135,6 +126,10 @@
 				</thead>
 			</table>
 		</div>
+						<!-- data-detail-view="true"
+											data-show-refresh="true"
+				data-detail-view-by-click="true"
+				data-detail-view-icon="false" -->
 		<div id="ttable">
 			<table
 				id="attable"
@@ -142,15 +137,11 @@
 				data-toggle="abtable"
 				data-height="360"
 				data-search="false"
-				data-show-refresh="true"
 				data-filter-control="true"
 				data-method="get"
 				data-pagination="true"
-				data-detail-view="true"
-				data-detail-view-by-click="true"
-				data-detail-view-icon="false"
 				data-click-to-select="true"
-				data-side-pagination="server">
+				data-side-pagination="client">
 				<thead class="thead-light">
 				<tr>
 					<th data-field="state" data-checkbox="true"></th>

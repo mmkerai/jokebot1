@@ -167,7 +167,7 @@ process.on('uncaughtException', function (err) {
 io.on('connection',function(socket) {
 //  console.log("Socket id: "+socket.id);
   socket.on('disconnect',function () {
-    removeSocket(socket.id,"disconnect");
+//    removeSocket(socket.id,"disconnect");
   });
 
   socket.on('end',function() {
