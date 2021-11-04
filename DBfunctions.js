@@ -202,11 +202,12 @@ DB.prototype.getAllTwitterUsers = function(callback) {
 
 // get a list of all twitter user in collection
 DB.prototype.updateUserLastTweet = function(twuser,twid) {
+  var timenow = new Date().toISOString();
   CollTwUsers.updateOne(
-    {tw_id:twuser.tw_id},{$set: {last_tweet_id : twid}},function(err, res) {
+    {tw_id:twuser.tw_id},{$set: {last_tweet_id : twid, last_search: timenow}},function(err, res) {
       if (err) throw err;
       if (res.result)
-        console.log("User updated:" +res.result.nModified);
+        console.log(twuser.tw_username+" updated:" +res.result.nModified);
   });
 }
 

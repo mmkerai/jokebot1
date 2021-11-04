@@ -290,29 +290,20 @@ io.on('connection',function(socket) {
       if(users == null || users == "")
         return(socket.emit("errorResponse","No twitter users"));
 
-      var newjokes = [];
-      var tweets, joke;
       users.forEach((user,index,array) => {
-        twt.getTweetsFromUser(user, function(response) {  // response contains array of tweets
-          tweets = JSON.parse(response);
-          if(tweets.data) {         // make sure there are some tweeets to read
-            tweets.data.forEach(tweet => {
-              joke = twt.beautifyJoke(tweet.text);  // filters out #tags, @ and links
-              if(joke.length > 16) {             // make sure the joke is potentially reasonable
-                qna = twt.getJokeType(joke);        // check for question
-                // TODO get a subject category instead of all being 'general'
-                jokeobj = jbt.newJoke(HIGHESTJOKEID++,"General",qna,user.tw_username,joke);
-                newjokes.push(jokeobj);
-              }
-            });
-            console.log("newest: "+tweets.meta.newest_id);
-            dbt.updateUserLastTweet(user,tweets.meta.newest_id);
-            if(index == array.length - 1)    // last one in list
-              socket.emit("getJokesResponse",newjokes);
-        }
+        if(user.tw_username.charAt(0) == '@')    // if user (not a hashtag)
+          twt.getTweetTimelineFromUserID(user, function(apistr) {
+            processTweet(user,apistr,socket);
+          }); 
+        else if(user.tw_username.charAt(0) == '#')   // must be a hashtag so search for tweets
+          twt.getTweetsbySearchFromName(user, function(apistr) {
+            processTweet(user,apistr,socket);
+          });
         else
-          socket.emit("infoResponse","No new jokes");
-       });
+          console.log("User ignored: "+user.tw_username);
+
+        // if(index == array.length - 1)    // last one in list
+        //   socket.emit("getJokesResponse",Newjokes);
       });
     });
   });
@@ -324,9 +315,11 @@ io.on('connection',function(socket) {
       console.log("Name: "+joke.source);
       dbt.insertJoke(joke);
     });
+    socket.emit("infoResponse",jokes.length+" new jokes added to DB");
   });
   
   // called to add new twitter user to list to follow for jokes
+  // If user the name will be prefixed with @. If hastag then name will be prefixed with #
   socket.on('addTwitterUserRequest',function(twname) {
     if(AUTHUSERS[socket.id] != JB.jbid) return(autherror(socket));
     twt.getTwitterUserFromName(twname, function(twuser) {
@@ -382,3 +375,28 @@ function autherror(socket,msg) {
   console.log(count+" Jokes Loaded");
 }
  */
+
+function processTweet(user,tweetrsp,socket) {  // response contains array of tweets
+  var tweets, joke, qna, jokeobj;
+  try {
+    tweets = JSON.parse(tweetrsp);
+    if(tweets.data) {         // make sure there are some tweeets to read
+      tweets.data.forEach(tweet => {
+        joke = twt.beautifyJoke(tweet.text);  // filters out #tags, @ and links
+        if(joke.length > 16) {             // make sure the joke is potentially reasonable
+          qna = twt.getJokeType(joke);        // check for question
+          // TODO get a subject category instead of all being 'general'
+          jokeobj = jbt.newJoke(HIGHESTJOKEID++,"General",qna,user.tw_username,joke);
+          socket.emit("getJokesResponse",jokeobj);
+        }
+      });
+      console.log(user.tw_username+ " newest id: "+tweets.meta.newest_id);
+      dbt.updateUserLastTweet(user,tweets.meta.newest_id);
+    }
+    else
+      console.log("No new jokes: "+user.tw_username);
+  }
+  catch(e) {
+    console.log("JSON error: twitter timeline - " + tweetrsp);
+  }
+}

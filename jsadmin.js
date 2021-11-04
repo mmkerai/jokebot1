@@ -58,13 +58,16 @@ function reviewjokes() {
 
 function addtwitteruser() {
 	clearMessages();
-	var tw = prompt("Please enter twitter username", "");
+	var tw = prompt("Please enter twitter username. Prepend name with @ or # as appropriate", "");
 	if(tw == null || tw == "") {
 		return;
 	}
-	else {
-		socket.emit('addTwitterUserRequest',tw);
+	if(tw.charAt(0) != '@' && tw.charAt(0) != '#') {
+		$("#error").text("User name must start with @ or #");
+		return;
 	}
+	
+	socket.emit('addTwitterUserRequest',tw);
 }
 
 function showtwitterusers() {
@@ -74,8 +77,9 @@ function showtwitterusers() {
 
 function getnewjokes() {
 	clearMessages();
+//	$jtable.bootstrapTable('destroy');
+	$jtable.bootstrapTable();
 	socket.emit('getNewJokesRequest','');
-	$('#select').show();
 }
 
 function getjokes() {
@@ -116,8 +120,10 @@ socket.on('getCatsResponse',function(cats) {
 // Bootstrap table
 socket.on('getJokesResponse',function(jlist) {
 	$('#jtable').show();
-	$jtable.bootstrapTable('destroy');
-	$jtable.bootstrapTable({data: jlist});
+	$('#select').show();
+//	$jtable.bootstrapTable({data: jlist});
+	$jtable.bootstrapTable('append', jlist);
+//	$table.bootstrapTable('scrollTo', 'bottom')
 });
 
 // Bootstrap table

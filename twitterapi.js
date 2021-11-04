@@ -11,6 +11,7 @@ class TwUser {
       this.tw_name = name;
       this.tw_username = uname;
       this.last_tweet_id = 0;
+      this.last_search = "";
       this.added = new Date().toISOString();
     }
 };
@@ -34,7 +35,7 @@ function TwAPI() {
     };
     
 	var getReq = https.request(options, function (res) {
-		console.log("\nstatus code: ", res.statusCode);
+//		console.log("status code: ", res.statusCode);
 		var str = "";
 		res.on('data', function (data) {
 			str += data;
@@ -53,20 +54,39 @@ function TwAPI() {
 
 TwAPI.prototype.getTwitterUserFromName = function(twname, callback) {
     var retval = null;
-    var path = '/2/users/by/username/' + twname;
+    // Twitter API does not like @ or # at start so remove it
+    var path = '/2/users/by/username/' + twname.substring(1);
     twitter_API_Request(path,function(response) {
-        var jstr = JSON.parse(response);
-        if(jstr.hasOwnProperty('data')) {
-            console.log("ID is "+jstr.data.id);
-            retval = new TwUser(jstr.data.id,jstr.data.name,jstr.data.username);
+        try {
+            var jstr = JSON.parse(response);
+            if(jstr.hasOwnProperty('data')) {
+                console.log("ID is "+jstr.data.id);
+                retval = new TwUser(jstr.data.id,jstr.data.name,twname);    //save with @ or # prefix
+            }
+        } catch(e) {
+            console.log("JSON error: get twitter user");
         }
 
         callback(retval);
     });
 }
 
-TwAPI.prototype.getTweetsFromUser = function(twuser, callback) {
+// This gets user timeline by tweets they specifically sent
+TwAPI.prototype.getTweetTimelineFromUserID = function(twuser, callback) {
     var path = '/2/users/' + twuser.tw_id + '/tweets?since_id='+twuser.last_tweet_id+'&tweet.fields=created_at,author_id';
+    twitter_API_Request(path, callback);
+}
+
+// This gets all tweets for this user ID for last 7 days. Used for hashtag IDs
+// If last query was before 7 days then set it to 7 days ago otherwise Tw API gives error
+TwAPI.prototype.getTweetsbySearchFromName = function(twuser, callback) {
+    var timenow = new Date();
+    var lastq = new Date();
+    twuser.last_search == "" ? lastq.setDate(timenow.getDate() - 6) : lastq = new Date(twuser.last_search);
+    if(timenow - lastq > 7*24*60*60*1000)       // check if elapsed time is greater than 7 days
+        lastq.setDate(timenow.getDate() - 7);
+
+    var path = '/2/tweets/search/recent?query=' + encodeURIComponent(twuser.tw_username) + '&start_time='+new Date(lastq).toISOString()+'&tweet.fields=created_at,author_id';
     twitter_API_Request(path, callback);
 }
 
