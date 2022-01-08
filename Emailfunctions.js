@@ -17,6 +17,17 @@ function EM() {
       pass: gmailpass
     }
   });
+
+  // verify connection configuration after 5 seconds
+  setTimeout(function() { mail.verify(function (error, success) {
+    if (error) {
+      console.log(error);
+      } else {
+      console.log("Email Server Connection Verified");
+      }
+    })
+  }, 5000);
+
 }
 
 EM.prototype.sendRegEmail = function(APIcreds) {

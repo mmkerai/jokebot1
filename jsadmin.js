@@ -10,6 +10,9 @@ $(document).ready(function() {
 	$('#reviewj').submit(function(event) {
 		event.preventDefault();
 	});
+	$('#jokeid').submit(function(event) {
+		event.preventDefault();
+	});
 });
  
 function signInSuper() {
@@ -56,6 +59,11 @@ function reviewjokes() {
 //	socket.emit('getAllJokesRequest','');
 }
 
+function getjokeid() {
+	clearMessages();
+	socket.emit('getJokeByIdRequest',$('#jid').val());
+}
+	
 function addtwitteruser() {
 	clearMessages();
 	var tw = prompt("Please enter twitter username. Prepend name with @ or # as appropriate", "");
@@ -119,10 +127,17 @@ socket.on('getCatsResponse',function(cats) {
 	
 // Bootstrap table
 socket.on('getJokesResponse',function(jlist) {
+//	console.log(JSON.stringify(jlist));
+	if(jlist.length == undefined)	{	// if only one object in list then convert to array
+		save = jlist;
+		jlist = [];
+		jlist.push(save);
+	}
 	$('#jtable').show();
 	$('#select').show();
-//	$jtable.bootstrapTable({data: jlist});
-	$jtable.bootstrapTable('append', jlist);
+	$jtable.bootstrapTable('destroy');
+	$jtable.bootstrapTable({data: jlist});
+//	$jtable.bootstrapTable('append', jlist);
 //	$table.bootstrapTable('scrollTo', 'bottom')
 });
 

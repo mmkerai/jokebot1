@@ -1,17 +1,18 @@
 /* 
 * This is the main app to run for Jokebot API
  */
-// Version 1.0
+// Version 1.3 8 Jan 2022
 var http = require('http');
 var bodyParser = require('body-parser');
 var app = require('express')();
 var	server = http.createServer(app);
 var crypto = require('crypto');
+require('dotenv').config();
 
 // delete these line afterwords
 const fs = require('fs');
 const Jfile = "alljokes.json";
-
+const SUPERPASS = process.env.SUPERPASS;
 //var	io = require('socket.io')(server);
 const io = require("socket.io")(server, {
   allowRequest: (req, callback) => {
@@ -47,7 +48,7 @@ console.log("Dir path: "+__dirname);
 console.log("Server started on port "+PORT);
 //*****Globals *************
 const SUPERADMIN = "thecodecentre@gmail.com";
-const SUPERPWD = crypto.createHash('sha256').update("Colocasia9191").digest('hex');
+const SUPERPWD = crypto.createHash('sha256').update(SUPERPASS).digest('hex');
 var AUTHUSERS = new Object(); // keep list of authenticated users by their socket ids
 var ActiveTokens = new Object(); // keep list of active tokens by expiry time
 
