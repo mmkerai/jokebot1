@@ -135,9 +135,9 @@ socket.on('getJokesResponse',function(jlist) {
 	}
 	$('#jtable').show();
 	$('#select').show();
-	$jtable.bootstrapTable('destroy');
-	$jtable.bootstrapTable({data: jlist});
-//	$jtable.bootstrapTable('append', jlist);
+//	$jtable.bootstrapTable('destroy');
+//	$jtable.bootstrapTable({data: jlist});
+	$jtable.bootstrapTable('append', jlist);
 //	$table.bootstrapTable('scrollTo', 'bottom')
 });
 
