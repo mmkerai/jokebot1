@@ -12,6 +12,7 @@ function EM() {
   console.log("Connecting to GMAIL");
   mail = nodemailer.createTransport({
     service: 'gmail',
+    secure: true,
     auth: {
       user: gmailaccount,
       pass: gmailpass
@@ -21,9 +22,9 @@ function EM() {
   // verify connection configuration after 5 seconds
   setTimeout(function() { mail.verify(function (error, success) {
     if (error) {
-      console.log(error);
+        console.log(error);
       } else {
-      console.log("Email Server Connection Verified");
+        console.log("Email Server Connection Verified");
       }
     })
   }, 5000);
